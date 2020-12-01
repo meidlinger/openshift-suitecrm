@@ -48,11 +48,11 @@ objects:
                   # base images 
                   oc import-image phpbase:7.3-fpm-alpine --from=php:7.3-fpm-alpine --confirm -n ${NAMESPACE} 
                   sleep 5
-                  oc new-build --name=suitecrmdev-basebuild ${NAMESPACE}/phpbase:7.3-fpm-alpine~${SOURCE_REPOSITORY_URL}   --context-dir=baseimage --strategy=docker --allow-missing-images -n ${NAMESPACE}  
+                  oc new-build --name=suitecrmdev-basebuild ${NAMESPACE}/phpbase:7.3-fpm-alpine~${SOURCE_REPOSITORY_URL}#${SOURCE_REPOSITORY_REF}   --context-dir=baseimage --strategy=docker --allow-missing-images -n ${NAMESPACE}  
                   sleep 300
                   oc start-build suitecrmdev-basebuild --follow -n ${NAMESPACE}  
                   sleep 5
-                  oc new-build --name=suitecrmdev-build  ${NAMESPACE}/suitecrmdev-basebuild~${SOURCE_REPOSITORY_URL}   --context-dir=suitecrmimage --strategy=docker --env=SUITECRM_RELEASE_URL=${SUITECRM_RELEASE_URL} -n ${NAMESPACE} 
+                  oc new-build --name=suitecrmdev-build  ${NAMESPACE}/suitecrmdev-basebuild~${SOURCE_REPOSITORY_URL}#${SOURCE_REPOSITORY_REF}   --context-dir=suitecrmimage --strategy=docker --env=SUITECRM_RELEASE_URL=${SUITECRM_RELEASE_URL} -n ${NAMESPACE} 
                   sleep 600
                   oc start-build suitecrmdev-build --follow -n ${NAMESPACE}  
                   sleep 5
