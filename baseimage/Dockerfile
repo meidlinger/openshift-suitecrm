@@ -55,10 +55,11 @@ RUN mkdir -p /var/www/html/public
 COPY index.php/ /var/www/html/public/
 
 # Make sure files/folders needed by the processes are accessable when they run under the nobody user
-RUN chown -R nobody.nobody /var/www/html && \
-  chown -R nobody.nobody /run && \
-  chown -R nobody.nobody /var/lib/nginx && \
-  chown -R nobody.nobody /var/log/nginx
+RUN chgrp -R root /var/www/html && \
+  chgrp -R root /run || \
+  chgrp -R root /var/lib/nginx && \
+  chgrp -R root /var/log/nginx
+
 
 # Make the document root a volume
 # VOLUME /var/www/html

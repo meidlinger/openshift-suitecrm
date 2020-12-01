@@ -59,18 +59,18 @@ objects:
                   oc new-app --name=suitecrm ${NAMESPACE}/suitecrmdev-build:latest   -n ${NAMESPACE} 
                   sleep 50
                   oc create secret generic suitecrmdev-secret   --from-literal="database_password=${DATABASE_PASSWORD}" --from-literal="database_user=${DATABASE_USER}" --from-literal="suitecrm_secret_token=${SUITECRM_SECRET_TOKEN}" --from-literal="suitecrm_security_salt=${SUITECRM_SECURITY_SALT}" --from-literal="mysql_user=${DATABASE_USER}" --from-literal="mysql_password=${DATABASE_PASSWORD}"  -n ${NAMESPACE}
-                  oc set env dc/suitecrm --from=secret/suitecrmdev-secret  -n ${NAMESPACE} 
-                  oc set env dc/suitecrm DATABASE_HOST=${DATABASE_SERVICE_NAME} -n ${NAMESPACE}
-                  oc set env dc/suitecrm DATABASE_NAME=${DATABASE_NAME} -n ${NAMESPACE}
-                  oc set triggers dc -l suitecrm --containers=suitecrm-app --from-image=suitecrm-build:latest --manual -n ${NAMESPACE}
-                  oc rollout latest dc/suitecrm -n ${NAMESPACE} 
+                  oc set env deployment/suitecrm --from=secret/suitecrmdev-secret  -n ${NAMESPACE} 
+                  oc set env deployment/suitecrm DATABASE_HOST=${DATABASE_SERVICE_NAME} -n ${NAMESPACE}
+                  oc set env deployment/suitecrm DATABASE_NAME=${DATABASE_NAME} -n ${NAMESPACE}
+                  oc set triggers deployment -l suitecrm --containers=suitecrm-app --from-image=suitecrm-build:latest --manual -n ${NAMESPACE}
+                  oc rollout latest deployment/suitecrm -n ${NAMESPACE} 
                   
                   # sleep 5
                   oc expose svc/suitecrm -n ${NAMESPACE}
                   # deploy mysql 
                   oc new-app --name=${DATABASE_SERVICE_NAME} -e MYSQL_DATABASE=${DATABASE_NAME}   docker.io/centos/mysql-57-centos7:latest -n ${NAMESPACE}
-                  oc set resources dc/${DATABASE_SERVICE_NAME} --limits=memory=${MEMORY_MYSQL_LIMIT} 
-                  oc set env dc/${DATABASE_SERVICE_NAME} --from=secret/suitecrmdev-secret  -n ${NAMESPACE}
+                  oc set resources deployment/${DATABASE_SERVICE_NAME} --limits=memory=${MEMORY_MYSQL_LIMIT} 
+                  oc set env deployment/${DATABASE_SERVICE_NAME} --from=secret/suitecrmdev-secret  -n ${NAMESPACE}
                   sleep 50
               env:
                 - name: NAMESPACE
